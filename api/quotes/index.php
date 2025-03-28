@@ -14,7 +14,6 @@ if ($method === 'OPTIONS') {
     exit();
 }
 
-// Main routing switch
 switch ($method) {
     case 'GET':
         if (isset($_GET['id'])) {
@@ -33,6 +32,6 @@ switch ($method) {
         require 'delete.php';
         break;
     default:
-        echo json_encode(['message' => 'Invalid request method']);
+        echo json_encode(["message" => "Invalid request method"]);
         break;
 }

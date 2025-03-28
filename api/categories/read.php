@@ -10,13 +10,7 @@ $db = $database->connect();
 
 $category = new Category($db);
 
-if (isset($_GET['id'])) {
-    $category->id = $_GET['id'];
-    $result = $category->read_single();
-} else {
-    $result = $category->read();
-}
-
+$result = $category->read();
 $num = $result->rowCount();
 
 if ($num > 0) {
@@ -24,7 +18,6 @@ if ($num > 0) {
 
     while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
         extract($row);
-
         $categories_arr[] = [
             'id' => $id,
             'category' => $category
@@ -33,6 +26,7 @@ if ($num > 0) {
 
     echo json_encode($categories_arr);
 } else {
+    http_response_code(404);
     echo json_encode(['message' => 'No Categories Found']);
 }
 ?>

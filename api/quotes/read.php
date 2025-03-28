@@ -5,31 +5,12 @@ header('Content-Type: application/json');
 include_once '../../config/Database.php';
 include_once '../../models/Quote.php';
 
-// Instantiate DB & connect
 $database = new Database();
 $db = $database->connect();
 
-// Instantiate quote object
 $quote = new Quote($db);
 
-// Check for query parameters
-if (isset($_GET['id'])) {
-    $quote->id = $_GET['id'];
-    $result = $quote->read_single();
-} elseif (isset($_GET['author_id']) && isset($_GET['category_id'])) {
-    $quote->author_id = $_GET['author_id'];
-    $quote->category_id = $_GET['category_id'];
-    $result = $quote->read_by_author_and_category();
-} elseif (isset($_GET['author_id'])) {
-    $quote->author_id = $_GET['author_id'];
-    $result = $quote->read_by_author();
-} elseif (isset($_GET['category_id'])) {
-    $quote->category_id = $_GET['category_id'];
-    $result = $quote->read_by_category();
-} else {
-    $result = $quote->read(); // Get all quotes
-}
-
+$result = $quote->read();
 $num = $result->rowCount();
 
 if ($num > 0) {
@@ -37,7 +18,6 @@ if ($num > 0) {
 
     while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
         extract($row);
-
         $quotes_arr[] = [
             'id' => $id,
             'quote' => $quote,
@@ -48,6 +28,7 @@ if ($num > 0) {
 
     echo json_encode($quotes_arr);
 } else {
+    http_response_code(404);
     echo json_encode(['message' => 'No Quotes Found']);
 }
 ?>

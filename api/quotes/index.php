@@ -1,10 +1,10 @@
 <?php
-ini_set('display_errors', 1); // show errors while debugging
+ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json'); // <-- KEY!
+header('Content-Type: application/json');
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -14,6 +14,7 @@ if ($method === 'OPTIONS') {
     exit();
 }
 
+// Main routing switch
 switch ($method) {
     case 'GET':
         if (isset($_GET['id'])) {
@@ -30,5 +31,8 @@ switch ($method) {
         break;
     case 'DELETE':
         require 'delete.php';
+        break;
+    default:
+        echo json_encode(['message' => 'Invalid request method']);
         break;
 }

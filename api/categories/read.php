@@ -1,4 +1,7 @@
 <?php
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
+
 require_once '../../config/Database.php';
 require_once '../../models/Category.php';
 
@@ -13,4 +16,5 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     extract($row);
     $categories[] = ['id' => $id, 'category' => $category];
 }
+
 echo json_encode($categories);

@@ -60,13 +60,7 @@ function runTest() {
 }
 </script>
 
-<p><strong>Examples to try:</strong></p>
-<ul>
-  <li><code>/api/quotes/</code></li>
-  <li><code>/api/quotes/?id=10</code></li>
-  <li><code>/api/authors/</code></li>
-  <li><code>/api/categories/</code></li>
-</ul>
+
 
 </body>
 </html>

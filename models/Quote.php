@@ -81,4 +81,48 @@ class Quote {
         $stmt->bindParam(':id', $this->id);
         return $stmt->execute();
     }
+
+
+    public function read_by_author($author_id) {
+    $query = 'SELECT q.id, q.quote, a.author, c.category
+              FROM quotes q
+              JOIN authors a ON q.author_id = a.id
+              JOIN categories c ON q.category_id = c.id
+              WHERE q.author_id = :author_id';
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':author_id', $author_id);
+    $stmt->execute();
+    return $stmt;
+}
+
+
+    public function read_by_category($category_id) {
+    $query = 'SELECT q.id, q.quote, a.author, c.category
+              FROM quotes q
+              JOIN authors a ON q.author_id = a.id
+              JOIN categories c ON q.category_id = c.id
+              WHERE q.category_id = :category_id';
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':category_id', $category_id);
+    $stmt->execute();
+    return $stmt;
+}
+
+
+    public function read_by_author_and_category($author_id, $category_id) {
+    $query = 'SELECT q.id, q.quote, a.author, c.category
+              FROM quotes q
+              JOIN authors a ON q.author_id = a.id
+              JOIN categories c ON q.category_id = c.id
+              WHERE q.author_id = :author_id AND q.category_id = :category_id';
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':author_id', $author_id);
+    $stmt->bindParam(':category_id', $category_id);
+    $stmt->execute();
+    return $stmt;
+}
+
 }

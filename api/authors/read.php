@@ -2,34 +2,37 @@
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
-require_once '../../config/Database.php';
-require_once '../../models/Author.php'; 
+include_once '../../config/Database.php';
+include_once '../../models/Author.php';
 
 $database = new Database();
 $db = $database->connect();
 
-$author = new Author($db); 
-$result = $author->read(); 
+$author = new Author($db);
 
-if ($result) {
-    if ($result->rowCount() > 0) {
-        $data = [];
-
-        while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-            extract($row);
-            $data[] = [
-                'id' => $id,
-                'author' => $author  
-            ];
-        }
-
-        http_response_code(200);
-        echo json_encode($data);
-    } else {
-        http_response_code(404);
-        echo json_encode(['message' => 'No authors found.']); 
-    }
+if (isset($_GET['id'])) {
+    $author->id = $_GET['id'];
+    $result = $author->read_single();
 } else {
-    http_response_code(500);
-    echo json_encode(['message' => 'Failed to query database.']);
+    $result = $author->read();
 }
+
+$num = $result->rowCount();
+
+if ($num > 0) {
+    $authors_arr = [];
+
+    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+        extract($row);
+
+        $authors_arr[] = [
+            'id' => $id,
+            'author' => $author
+        ];
+    }
+
+    echo json_encode($authors_arr);
+} else {
+    echo json_encode(['message' => 'No Authors Found']);
+}
+?>

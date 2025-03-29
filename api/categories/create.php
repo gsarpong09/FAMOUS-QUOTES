@@ -1,10 +1,11 @@
 <?php
-// Set response headers
+// Headers
 header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods,Authorization,X-Requested-With');
+header('Access-Control-Allow-Headers: Access-Control-Allow-Headers, Content-Type, Access-Control-Allow-Methods, Authorization, X-Requested-With');
 
+// Include DB and model
 include_once '../../config/Database.php';
 include_once '../../models/Category.php';
 
@@ -15,19 +16,19 @@ $db = $database->connect();
 // Instantiate category object
 $category = new Category($db);
 
-// Get raw input data
+// Get raw POST input
 $data = json_decode(file_get_contents("php://input"));
 
-// Validate input
-if (!isset($data->category)) {
+// Validate required input
+if (!isset($data->category) || empty($data->category)) {
     echo json_encode(['message' => 'Missing Required Parameters']);
-    exit;
+    exit();
 }
 
-// Assign to object
+// Set category
 $category->category = $data->category;
 
-// Attempt to create
+// Create category
 if ($category->create()) {
     echo json_encode([
         'id' => $category->id,
@@ -36,3 +37,4 @@ if ($category->create()) {
 } else {
     echo json_encode(['message' => 'Category Not Created']);
 }
+?>

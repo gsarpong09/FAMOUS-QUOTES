@@ -3,7 +3,7 @@
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
-// Include database and model
+// Include database and object files
 include_once '../../config/Database.php';
 include_once '../../models/Quote.php';
 
@@ -14,26 +14,20 @@ $db = $database->connect();
 // Instantiate quote object
 $quote = new Quote($db);
 
-// Get ID from URL
-$quote->id = isset($_GET['id']) ? $_GET['id'] : null;
-
-if (!$quote->id) {
-    echo json_encode(['message' => 'Missing Required Parameter: id']);
-    http_response_code(400);
-    exit;
+// Check for ID param
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    echo json_encode(['message' => 'Missing or invalid id parameter']);
+    exit();
 }
 
-// Read single quote
-if ($quote->read_single()) {
-    $quote_arr = [
-        'id' => $quote->id,
-        'quote' => $quote->quote,
-        'author' => $quote->author,
-        'category' => $quote->category
-    ];
-    echo json_encode($quote_arr);
+// Set ID and try to get quote
+$quote->id = $_GET['id'];
+$result = $quote->read_single();
+
+// Return result or error
+if ($result) {
+    echo json_encode($result);
 } else {
     echo json_encode(['message' => 'No Quotes Found']);
-    http_response_code(404);
 }
 ?>

@@ -36,17 +36,30 @@ class Quote {
     }
 
     public function read_single() {
-        $query = "SELECT q.id, q.quote, a.author, c.category
-                  FROM " . $this->table . " q
-                  JOIN authors a ON q.author_id = a.id
-                  JOIN categories c ON q.category_id = c.id
-                  WHERE q.id = :id LIMIT 1";
-
+        $query = 'SELECT 
+                    q.id, q.quote, 
+                    a.author AS author, 
+                    c.category AS category 
+                  FROM ' . $this->table . ' q 
+                  LEFT JOIN authors a ON q.author_id = a.id 
+                  LEFT JOIN categories c ON q.category_id = c.id 
+                  WHERE q.id = ? 
+                  LIMIT 1';
+    
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $this->id);
+        $stmt->bindParam(1, $this->id);
         $stmt->execute();
-        return $stmt;
+    
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $this->quote = $row['quote'];
+            $this->author = $row['author'];
+            $this->category = $row['category'];
+            return true;
+        }
+    
+        return false;
     }
+
 
     public function create() {
         $query = "INSERT INTO " . $this->table . " (quote, author_id, category_id)

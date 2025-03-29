@@ -1,10 +1,11 @@
 <?php
-// Set response headers
+// Headers
 header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Methods: DELETE');
-header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods,Authorization,X-Requested-With');
+header('Access-Control-Allow-Headers: Access-Control-Allow-Headers, Content-Type, Access-Control-Allow-Methods, Authorization, X-Requested-With');
 
+// Include DB and model
 include_once '../../config/Database.php';
 include_once '../../models/Author.php';
 
@@ -15,21 +16,22 @@ $db = $database->connect();
 // Instantiate author object
 $author = new Author($db);
 
-// Get raw input data
+// Get raw DELETE input
 $data = json_decode(file_get_contents("php://input"));
 
-// Validate input
+// Validate required parameter
 if (!isset($data->id)) {
     echo json_encode(['message' => 'Missing Required Parameters']);
-    exit;
+    exit();
 }
 
-// Set ID to delete
+// Set ID
 $author->id = $data->id;
 
-// Attempt to delete
+// Attempt deletion
 if ($author->delete()) {
     echo json_encode(['id' => $author->id]);
 } else {
-    echo json_encode(['message' => 'Author Not Deleted']);
+    echo json_encode(['message' => 'author_id Not Found']);
 }
+?>

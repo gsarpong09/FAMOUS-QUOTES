@@ -1,32 +1,32 @@
 <?php
+// Headers
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
+// Include DB and Category model
 include_once '../../config/Database.php';
 include_once '../../models/Category.php';
 
+// Instantiate DB & connect
 $database = new Database();
 $db = $database->connect();
 
+// Instantiate Category object
 $category = new Category($db);
 
-// Check for ID parameter
-if (!isset($_GET['id']) || empty($_GET['id'])) {
-    http_response_code(400);
-    echo json_encode(['message' => 'Missing Required Parameters']);
+// Validate and get id
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    echo json_encode(['message' => 'Missing or invalid id parameter']);
     exit();
 }
 
+// Set ID and get data
 $category->id = $_GET['id'];
-$category->read_single();
+$result = $category->read_single();
 
-if ($category->category !== null) {
-    echo json_encode([
-        'id' => $category->id,
-        'category' => $category->category
-    ]);
+if ($result) {
+    echo json_encode($result);
 } else {
-    http_response_code(404);
     echo json_encode(['message' => 'category_id Not Found']);
 }
 ?>
